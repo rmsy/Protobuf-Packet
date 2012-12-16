@@ -19,10 +19,10 @@ public final class SimplePacketManager<T extends Message> implements PacketManag
     private final BiMap<Descriptor, FieldDescriptor> descriptorMapping = HashBiMap.create();
     private final ExtensionRegistry reg = ExtensionRegistry.newInstance();
 
-    public SimplePacketManager(Builder factory) {
-        this.factory = factory;
+    public SimplePacketManager(Message packetType) {
+        this.factory = packetType.newBuilderForType();
 
-        for(FieldDescriptor desc : factory.getDescriptorForType().getExtensions()) {
+        for(FieldDescriptor desc : this.factory.getDescriptorForType().getExtensions()) {
             if(desc.getType() == Type.MESSAGE) {
                 this.descriptorMapping.put(desc.getContainingType(), desc);
                 this.reg.add(desc);
@@ -34,7 +34,7 @@ public final class SimplePacketManager<T extends Message> implements PacketManag
         for(Map.Entry<FieldDescriptor, Object> entry : packet.getAllFields().entrySet()) {
             if(this.descriptorMapping.containsValue(entry.getKey())) {
                 Message msg = (Message) entry.getValue();
-                new SimpleMessageHandlerRegistry().handle(msg);
+                registry.handle(msg);
             }
         }
     }
