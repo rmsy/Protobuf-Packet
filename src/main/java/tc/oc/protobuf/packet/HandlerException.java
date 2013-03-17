@@ -1,4 +1,4 @@
-package net.anxuiz.protobuf.packet;
+package tc.oc.protobuf.packet;
 
 public class HandlerException extends Exception {
     private static final long serialVersionUID = 1L;

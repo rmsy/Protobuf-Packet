@@ -1,4 +1,4 @@
-package net.anxuiz.protobuf.packet.base;
+package tc.oc.protobuf.packet.base;
 
 import java.lang.reflect.Method;
 import java.util.Iterator;
@@ -9,8 +9,9 @@ import java.util.logging.Logger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.anxuiz.protobuf.packet.*;
-import net.anxuiz.protobuf.packet.util.DescriptorUtil;
+import tc.oc.protobuf.packet.*;
+import tc.oc.protobuf.packet.util.DescriptorUtil;
+
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ArrayListMultimap;

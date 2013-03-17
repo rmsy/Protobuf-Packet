@@ -1,4 +1,4 @@
-package net.anxuiz.protobuf.packet.base;
+package tc.oc.protobuf.packet.base;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -6,8 +6,9 @@ import java.lang.reflect.Method;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.anxuiz.protobuf.packet.HandlerException;
-import net.anxuiz.protobuf.packet.MessageHandler;
+import tc.oc.protobuf.packet.HandlerException;
+import tc.oc.protobuf.packet.MessageHandler;
+
 
 import com.google.common.base.Preconditions;
 import com.google.protobuf.Message;

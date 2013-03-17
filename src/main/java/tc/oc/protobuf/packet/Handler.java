@@ -1,4 +1,4 @@
-package net.anxuiz.protobuf.packet;
+package tc.oc.protobuf.packet;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

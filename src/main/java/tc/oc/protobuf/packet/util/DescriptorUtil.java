@@ -1,4 +1,4 @@
-package net.anxuiz.protobuf.packet.util;
+package tc.oc.protobuf.packet.util;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

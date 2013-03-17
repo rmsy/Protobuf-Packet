@@ -1,11 +1,12 @@
-package net.anxuiz.protobuf.packet.base;
+package tc.oc.protobuf.packet.base;
 
 import java.util.Map;
 
 import javax.annotation.Nonnull;
 
-import net.anxuiz.protobuf.packet.MessageHandlerRegistry;
-import net.anxuiz.protobuf.packet.PacketManager;
+import tc.oc.protobuf.packet.MessageHandlerRegistry;
+import tc.oc.protobuf.packet.PacketManager;
+
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;

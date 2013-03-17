@@ -1,4 +1,4 @@
-package net.anxuiz.protobuf.packet;
+package tc.oc.protobuf.packet;
 
 import com.google.protobuf.Message;
 

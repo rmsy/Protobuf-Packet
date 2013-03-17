@@ -1,4 +1,4 @@
-package net.anxuiz.protobuf.packet.util;
+package tc.oc.protobuf.packet.util;
 
 import com.google.protobuf.Descriptors.Descriptor;
 import com.google.protobuf.Descriptors.FieldDescriptor;
