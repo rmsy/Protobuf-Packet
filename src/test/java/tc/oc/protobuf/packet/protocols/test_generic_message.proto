@@ -1,0 +1,23 @@
+package tc.oc.protobuf.packet.protocols;
+
+option java_package = "tc.oc.protobuf.packet.protocols";
+option java_outer_classname = "TestGenericMessage";
+
+message GenericMessage {
+	repeated double double_value = 1 [packed=true];
+	repeated float float_value = 2 [packed=true];
+	repeated int32 integer32_value = 3 [packed=true];
+	repeated int64 integer64_value = 4 [packed=true];
+	repeated uint32 unsigned_integer32_value = 5 [packed=true];
+	repeated uint64 unsigned_integer64_value = 6 [packed=true];
+	repeated sint32 signed_integer32_value = 7 [packed=true];
+	repeated sint64 signed_integer64_value = 8 [packed=true];
+	repeated fixed32 fixed_number32_value = 9 [packed=true];
+	repeated fixed64 fixed_number64_value = 10 [packed=true];
+	repeated sfixed32 signed_fixed_number32_value = 11 [packed=true];
+	repeated sfixed64 signed_fixed_number64_value = 12 [packed=true];
+	repeated bool boolean_value = 13;
+	repeated string string_value = 14;
+	repeated bytes byte_sequence_value = 15;
+	extensions 16 to max;
+}

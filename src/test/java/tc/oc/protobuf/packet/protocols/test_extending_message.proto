@@ -1,0 +1,13 @@
+package tc.oc.protobuf.packet.protocols;
+
+import "src/test/java/tc/oc/protobuf/packet/protocols/test_generic_message.proto";
+
+option java_package = "tc.oc.protobuf.packet.protocols";
+option java_outer_classname = "TestExtendingMessage";
+
+message ExtendingMessage {
+	extend GenericMessage {
+	  required ExtendingMessage extending_message = 16;
+	}
+	required int32 numerical_value = 1 [default=12];
+}
