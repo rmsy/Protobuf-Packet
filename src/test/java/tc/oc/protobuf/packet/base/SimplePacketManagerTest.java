@@ -52,15 +52,16 @@ public class SimplePacketManagerTest implements MessageListener {
         Assert.assertEquals("handle() incorrectly parsed ExtendingMessage (or got corrupt ExtendingMessage)", extendedInt, parsedInt);
     }
 
+    @Test
     public void buildTest() {
-        //  TODO: Implementation.
+        parsedInt = packetManager.build(TestExtendingMessage.ExtendingMessage.newBuilder().setNumericalValue(extendedInt).build()).getExtension(TestExtendingMessage.ExtendingMessage.extendingMessage).getNumericalValue();
+        Assert.assertEquals("build() did not return an equivalent message", extendedInt, parsedInt);
     }
 
     @Handler
-    public void handle(TestGenericMessage.GenericMessage message) throws HandlerException {
-        TestExtendingMessage.ExtendingMessage extendingMessage = (TestExtendingMessage.ExtendingMessage) message.getExtension(TestExtendingMessage.ExtendingMessage.extendingMessage);
-        if (extendingMessage != null) {
-            this.parsedInt = extendingMessage.getNumericalValue();
+    public void handle(TestExtendingMessage.ExtendingMessage message) throws HandlerException {
+        if (message != null) {
+            this.parsedInt = message.getNumericalValue();
             this.handlerHasParsed = true;
         }
         this.handlerHasRun = true;
