@@ -1,48 +1,44 @@
 package tc.oc.protobuf.packet.base;
 
-import java.util.Map;
-
-import javax.annotation.Nonnull;
-
+import com.google.common.base.Preconditions;
+import com.google.protobuf.Descriptors;
+import com.google.protobuf.ExtensionRegistry;
+import com.google.protobuf.Message;
 import tc.oc.protobuf.packet.MessageHandlerRegistry;
 import tc.oc.protobuf.packet.PacketManager;
 
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-import com.google.protobuf.Descriptors.Descriptor;
-import com.google.protobuf.Descriptors.FieldDescriptor;
-import com.google.protobuf.Descriptors.FieldDescriptor.Type;
-import com.google.protobuf.*;
-import com.google.protobuf.Message.Builder;
+import javax.annotation.Nonnull;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public final class SimplePacketManager<T extends Message> implements PacketManager<T> {
-    private final Builder factory;
-    // type descriptor to field descriptor
-    private final BiMap<Descriptor, FieldDescriptor> descriptorMapping = HashBiMap.create();
-    private final ExtensionRegistry reg = ExtensionRegistry.newInstance();
+    private final Message.Builder builder;
+    private final Map<Descriptors.Descriptor, ExtensionRegistry.ExtensionInfo> descriptorMapping = new HashMap<>();
+    private final ExtensionRegistry reg;
 
-    public SimplePacketManager(@Nonnull Message packet) {
-        Preconditions.checkNotNull(packet, "packet");
-
-        this.factory = packet.newBuilderForType();
-
-        for(FieldDescriptor desc : this.factory.getDescriptorForType().getExtensions()) {
-            if(desc.getType() == Type.MESSAGE) {
-                this.descriptorMapping.put(desc.getContainingType(), desc);
-                this.reg.add(desc);
+    public SimplePacketManager(@Nonnull Message packet, @Nonnull final ExtensionRegistry reg) {
+        this.builder = packet.newBuilderForType();
+        Set<ExtensionRegistry.ExtensionInfo> extensionInfoSet = reg.getExtensions();
+        for (ExtensionRegistry.ExtensionInfo extension : extensionInfoSet) {
+            if (extension.descriptor.getJavaType().equals(Descriptors.FieldDescriptor.JavaType.MESSAGE)) {
+                descriptorMapping.put(extension.descriptor.getExtensionScope(), extension);
             }
         }
+        assert descriptorMapping != null;
+        this.reg = reg;
     }
 
+    /**
+     * Not implemented. TODO: Implementation.
+     */
     public int parse(@Nonnull T packet, @Nonnull MessageHandlerRegistry registry) {
         Preconditions.checkNotNull(packet, "packet");
         Preconditions.checkNotNull(registry, "handler registry");
 
         int numParsed = 0;
-        for(Map.Entry<FieldDescriptor, Object> entry : packet.getAllFields().entrySet()) {
-            if(this.descriptorMapping.containsValue(entry.getKey())) {
+        for (Map.Entry<Descriptors.FieldDescriptor, Object> entry : packet.getAllFields().entrySet()) {
+            if (this.descriptorMapping.containsValue(entry.getKey())) {
                 Message msg = (Message) entry.getValue();
                 registry.handle(msg);
                 numParsed++;
@@ -52,14 +48,22 @@ public final class SimplePacketManager<T extends Message> implements PacketManag
         return numParsed;
     }
 
-    @SuppressWarnings("unchecked")
-    public @Nonnull T build(Message msg) {
+    @Nonnull
+    public T build(Message msg) {
         Preconditions.checkNotNull(msg, "message");
-
-        Builder packet = this.factory.clone();
-        FieldDescriptor desc = this.descriptorMapping.get(msg.getDescriptorForType());
-        packet.setField(desc, msg);
+        Message.Builder packet = this.builder.clone();
+        packet.setField(descriptorMapping.get(msg.getDescriptorForType()).descriptor, msg);
 
         return (T) packet.buildPartial();
+    }
+
+    /**
+     * Gets the {@link ExtensionRegistry} for use in parsing packets.
+     *
+     * @return The {@link ExtensionRegistry} for use in parsing packets.
+     */
+    @Nonnull
+    public ExtensionRegistry getExtensionRegistry() {
+        return this.reg;
     }
 }
