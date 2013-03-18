@@ -25,7 +25,7 @@ public final class DescriptorUtil {
 
         // check to see if it is a message type
         Class<?> msgClass = params[0];
-        if(Message.class.isAssignableFrom(msgClass)) {
+        if (!Message.class.isAssignableFrom(msgClass)) {
             throw new IllegalArgumentException("parameter type " + msgClass + " is not a protobuf message type");
         }
 
