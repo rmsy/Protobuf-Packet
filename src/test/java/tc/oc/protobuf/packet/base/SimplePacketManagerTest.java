@@ -1,5 +1,7 @@
 package tc.oc.protobuf.packet.base;
 
+import com.google.protobuf.ExtensionRegistry;
+import com.google.protobuf.InvalidProtocolBufferException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,13 +26,16 @@ public class SimplePacketManagerTest implements MessageListener {
     private boolean handlerHasParsed;
 
     @Before
-    public void initialize() {
+    public void initialize() throws InvalidProtocolBufferException {
+        this.extendedInt = new Random().nextInt(15);
         this.handlerRegistry = new SimpleMessageHandlerRegistry();
         handlerRegistry.registerAll(this);
-        this.packetManager = new SimplePacketManager<>(TestGenericMessage.GenericMessage.getDefaultInstance());
+        ExtensionRegistry registry = ExtensionRegistry.newInstance();
+        TestGenericMessage.registerAllExtensions(registry);
+        TestGenericMessage.GenericMessage message = TestGenericMessage.GenericMessage.newBuilder().setExtension(TestExtendingMessage.ExtendingMessage.extendingMessage, TestExtendingMessage.ExtendingMessage.newBuilder().setNumericalValue(extendedInt).build()).build();
+        this.packetManager = new SimplePacketManager<>(message, registry);
         this.handlerHasRun = false;
         this.handlerHasParsed = false;
-        this.extendedInt = new Random().nextInt(15);
         this.parsedInt = -1;
     }
 
