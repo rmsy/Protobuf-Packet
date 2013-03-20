@@ -1,3 +1,3 @@
-# Settings [![Build Status](https://secure.travis-ci.org/Anxuiz/Settings.png?branch=master)](https://travis-ci.org/Anxuiz/Settings)
+# Protobuf-packet
 
-General purpose library for providing base classes which encapsulate the idea of configurable settings.
+Library that makes it easier to treat protobuf messages as network packets.
