@@ -1,7 +1,7 @@
 package tc.oc.protobuf.packet.base;
 
 import com.google.protobuf.ExtensionRegistry;
-import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.Message;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,7 +14,7 @@ import tc.oc.protobuf.packet.protocols.TestGenericMessage;
 import java.util.Random;
 
 /**
- * File created at: 3/17/13 12:17 AM
+ * Test suite for {@link SimplePacketManager}.
  */
 @RunWith(JUnit4.class)
 public class SimplePacketManagerTest implements MessageListener {
@@ -23,52 +23,66 @@ public class SimplePacketManagerTest implements MessageListener {
     private int extendedInt;
     private int parsedInt;
     private boolean handlerHasRun;
-    private boolean handlerHasParsed;
 
+    /**
+     * Called before any tests are invoked; initializes variables needed for testing.
+     */
     @Before
-    public void initialize() throws InvalidProtocolBufferException {
-        this.extendedInt = new Random().nextInt(15);
-        this.handlerRegistry = new SimpleMessageHandlerRegistry();
-        handlerRegistry.registerAll(this);
+    public void initialize() {
         ExtensionRegistry registry = ExtensionRegistry.newInstance();
-        TestGenericMessage.registerAllExtensions(registry);
+        TestExtendingMessage.registerAllExtensions(registry);
         TestGenericMessage.GenericMessage message = TestGenericMessage.GenericMessage.newBuilder().setExtension(TestExtendingMessage.ExtendingMessage.extendingMessage, TestExtendingMessage.ExtendingMessage.newBuilder().setNumericalValue(extendedInt).build()).build();
         this.packetManager = new SimplePacketManager<>(message, registry);
+    }
+
+    /**
+     * Test to verify that {@link SimplePacketManager#parse(com.google.protobuf.Message,
+     * tc.oc.protobuf.packet.MessageHandlerRegistry)} is invoking handlers.
+     */
+    @Test
+    public void handlerRunTest() {
         this.handlerHasRun = false;
-        this.handlerHasParsed = false;
-        this.parsedInt = -1;
+        this.handlerRegistry = new SimpleMessageHandlerRegistry();
+        handlerRegistry.registerAll(this);
+        this.packetManager.parse(TestGenericMessage.GenericMessage.newBuilder().setExtension(TestExtendingMessage.ExtendingMessage.extendingMessage, TestExtendingMessage.ExtendingMessage.newBuilder().setNumericalValue(new Random().nextInt(15)).build()).build(), this.handlerRegistry);
+        Assert.assertTrue("handle() did not run", this.handlerHasRun);
     }
 
-    @Test
-    public void handlerRunTest() throws InterruptedException {
-        this.packetManager.parse(TestGenericMessage.GenericMessage.getDefaultInstance(), this.handlerRegistry);
-        Assert.assertTrue("handle() did not run", handlerHasRun);
-    }
-
-    @Test
-    public void handlerNullCheckTest() {
-        this.packetManager.parse(TestGenericMessage.GenericMessage.getDefaultInstance(), this.handlerRegistry);
-        Assert.assertFalse("handle() continued even with a null ExtendingMessage", handlerHasParsed);
-    }
-
+    /**
+     * Test to verify that {@link SimplePacketManager#parse(com.google.protobuf.Message,
+     * tc.oc.protobuf.packet.MessageHandlerRegistry)} is properly parsing extended messages.
+     */
     @Test
     public void handlerParseTest() {
+        this.extendedInt = new Random().nextInt(15);
+        this.parsedInt = -1;
+        this.handlerRegistry = new SimpleMessageHandlerRegistry();
+        handlerRegistry.registerAll(this);
         this.packetManager.parse(TestGenericMessage.GenericMessage.newBuilder().setExtension(TestExtendingMessage.ExtendingMessage.extendingMessage, TestExtendingMessage.ExtendingMessage.newBuilder().setNumericalValue(extendedInt).build()).build(), this.handlerRegistry);
         Assert.assertEquals("handle() incorrectly parsed ExtendingMessage (or got corrupt ExtendingMessage)", extendedInt, parsedInt);
     }
 
+    /**
+     * Test to verify that {@link SimplePacketManager#build(com.google.protobuf.Message)} is properly building messages
+     * with extensions.
+     */
     @Test
     public void buildTest() {
+        this.extendedInt = new Random().nextInt(15);
+        this.parsedInt = -1;
         parsedInt = packetManager.build(TestExtendingMessage.ExtendingMessage.newBuilder().setNumericalValue(extendedInt).build()).getExtension(TestExtendingMessage.ExtendingMessage.extendingMessage).getNumericalValue();
         Assert.assertEquals("build() did not return an equivalent message", extendedInt, parsedInt);
     }
 
+    /**
+     * Handler used in {@link #handlerParseTest()} and {@link #handlerRunTest()}.
+     *
+     * @param message The message to parse.
+     * @throws HandlerException Currently never thrown.
+     */
     @Handler
     public void handle(TestExtendingMessage.ExtendingMessage message) throws HandlerException {
-        if (message != null) {
-            this.parsedInt = message.getNumericalValue();
-            this.handlerHasParsed = true;
-        }
         this.handlerHasRun = true;
+        this.parsedInt = message.getNumericalValue();
     }
 }

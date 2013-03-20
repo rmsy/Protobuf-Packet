@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>tc.oc</groupId>
     <artifactId>protobuf-packet</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.2.0-SNAPSHOT</version>
     <name>Protobuf Packet</name>
     <description>Library that makes it easier to treat protobuf messages as network packets.</description>
     <licenses>
@@ -21,7 +21,7 @@
     <dependencies>
         <dependency>
             <groupId>com.google.protobuf</groupId>
-            <artifactId>protobuf-java</artifactId>
+            <artifactId>protobuf-java-extended</artifactId>
             <version>2.5.0</version>
         </dependency>
         <dependency>

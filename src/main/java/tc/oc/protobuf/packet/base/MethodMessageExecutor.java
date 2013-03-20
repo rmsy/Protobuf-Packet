@@ -1,21 +1,22 @@
 package tc.oc.protobuf.packet.base;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
+import com.google.common.base.Preconditions;
+import com.google.protobuf.Message;
 import tc.oc.protobuf.packet.HandlerException;
 import tc.oc.protobuf.packet.MessageHandler;
 
-
-import com.google.common.base.Preconditions;
-import com.google.protobuf.Message;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 public class MethodMessageExecutor implements MessageHandler {
-    private final @Nullable Object parent;
-    private final @Nonnull Method method;
+    private final
+    @Nullable
+    Object parent;
+    private final
+    @Nonnull
+    Method method;
 
     public MethodMessageExecutor(@Nullable Object parent, @Nonnull Method method) {
         Preconditions.checkNotNull(method, "method");
@@ -24,11 +25,15 @@ public class MethodMessageExecutor implements MessageHandler {
         this.method = method;
     }
 
-    public @Nullable Object getParent() {
+    public
+    @Nullable
+    Object getParent() {
         return this.parent;
     }
 
-    public @Nonnull Method getMethod() {
+    public
+    @Nonnull
+    Method getMethod() {
         return this.method;
     }
 
